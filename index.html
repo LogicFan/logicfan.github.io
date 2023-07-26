@@ -146,7 +146,7 @@
                             .style("top", (event.pageY) + "px")
 
                         var px = d3.pointer(event)[0];
-                        await state_tooltip(tooltip, d, cScale, xScale, px);
+                        await page1_tooltip(tooltip, d, cScale, xScale, px);
                     })
                     .on("mouseout", async function (event, d) {
                         tooltip.transition()
@@ -156,7 +156,7 @@
             }
         }
 
-        async function state_tooltip(tooltip, data, cScale, xScale, px) {
+        async function page1_tooltip(tooltip, data, cScale, xScale, px) {
             var date = xScale.invert(px);
             var i = d3.scan(data, function (d) { return Math.abs(d.date - date); })
             var d = data[i];
