@@ -22,8 +22,6 @@
             flex: 20%;
             columns: 100%;
             margin: 0;
-            display: flex;
-            flex-direction: column;
         }
 
         .right_column {
@@ -34,13 +32,7 @@
 
         #description {
             width: 100%;
-            flex: 50%;
-            padding: 10%;
-        }
-
-        #selection {
-            width: 100%;
-            flex: 50%;
+            height: 100%;
             padding: 10%;
         }
 
@@ -93,7 +85,6 @@
             document.getElementById("b1").style = "background-color: #f44336;";
 
             data = await infection_data;
-            console.log(data);
 
             // draw chart
             var h = 360;
@@ -178,15 +169,12 @@
             tooltip
                 .select("#text")
                 .text("as of " + d3.timeFormat("%B %d, %Y")(d.date) + ", there are " + d.cases + " people infected.");
-
-            console.log(d);
         }
 
         async function render_page2() {
             await reset_page();
             page = 2;
             document.getElementById("des_p2").hidden = false;
-            document.getElementById("sel_p2").hidden = false;
             document.getElementById("b2").style = "background-color: #f44336;";
         }
 
@@ -195,27 +183,8 @@
             page = 3;
             document.getElementById("next").disabled = true;
             document.getElementById("des_p3").hidden = false;
-            document.getElementById("sel_p3").hidden = false;
             document.getElementById("b3").style = "background-color: #f44336;";
         }
-
-        // async function render_legend() {
-        //     data = await infection_data;
-
-        //     // color axis
-        //     var c = d3.scaleBand()
-        //         .domain([...data.keys()].toSorted())
-        //         .range([0, 1]);
-
-        //     d3.select("#legend")
-        //         .append("dl")
-        //         .selectAll("dt")
-        //         .data([...data.keys()])
-        //         .enter()
-        //         .append("dt")
-        //         .style("color", function (d) { return d3.interpolateRainbow(c(d)); })
-        //         .text(function (d) { return "◼ " + d; });
-        // }
 
         async function render_page(i) {
             if (i == 1) {
@@ -241,9 +210,6 @@
             document.getElementById("des_p1").hidden = true;
             document.getElementById("des_p2").hidden = true;
             document.getElementById("des_p3").hidden = true;
-
-            document.getElementById("sel_p2").hidden = true;
-            document.getElementById("sel_p3").hidden = true;
 
             document.getElementById("prev").disabled = false;
             document.getElementById("next").disabled = false;
@@ -289,14 +255,6 @@
                     <p>some text 2</p>
                 </div>
                 <div id="des_p3" hidden>
-                    <p>some text 3</p>
-                </div>
-            </div>
-            <div id="selection">
-                <div id="sel_p2" hidden>
-                    <p>some text 2</p>
-                </div>
-                <div id="sel_p3" hidden>
                     <p>some text 3</p>
                 </div>
             </div>
