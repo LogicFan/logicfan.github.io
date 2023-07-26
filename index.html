@@ -35,16 +35,22 @@
         #description {
             width: 100%;
             flex: 50%;
+            padding: 10%;
         }
 
         #selection {
             width: 100%;
             flex: 50%;
+            padding: 10%;
         }
 
         #diagram {
             width: 100%;
             height: 100%;
+        }
+
+        #tooltip {
+            background-color: white;
         }
 
         .debug {
@@ -53,53 +59,253 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script type="module">
+    <script type="text/javascript">
         var page = 1;
 
-        function ctrl_page_button() {
-            if (page == 1) {
-                document.getElementById("prev").disabled = true
-                document.getElementById("next").disabled = false
-            } else if (page == 3) {
-                document.getElementById("prev").disabled = false
-                document.getElementById("next").disabled = true
-            } else {
-                document.getElementById("prev").disabled = true
-                document.getElementById("next").disabled = true
+        var infection_data = d3.csv('./data/infection.csv')
+            .then(function (data) {
+                map = new Map();
+                for (const unprocessed of data) {
+                    d = {
+                        state: unprocessed.state,
+                        date: d3.timeParse("%Y-%m-%d")(unprocessed.date),
+                        cases: Number(unprocessed.cases),
+                        deaths: Number(unprocessed.deaths),
+                    };
+
+                    if (map.has(d.state)) {
+                        map.get(d.state).push(d);
+                    } else {
+                        map.set(d.state, [d]);
+                    }
+                }
+                return map;
+            });
+
+        async function render_page1() {
+            await reset_page();
+            page = 1;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("des_p1").hidden = false;
+            document.getElementById("sel_p1").hidden = false;
+            document.getElementById("b1").style = "background-color: #f44336;";
+
+            data = await infection_data;
+            console.log(data);
+
+            // draw chart
+            var h = 360;
+            var w = 540;
+
+            var svg = d3.select("#diagram")
+                .append("g")
+                .attr("transform", "translate(40,20)")
+                .attr("id", "ref");
+
+            // x axis
+            var xScale = d3.scaleTime()
+                .domain([
+                    Math.min(...[...data.values()].flat().map(function (d) { return d.date; })),
+                    Math.max(...[...data.values()].flat().map(function (d) { return d.date; }))
+                ])
+                .range([0, w]);
+            svg.append("g")
+                .attr("transform", "translate(0," + h + ")")
+                .call(d3.axisBottom(xScale));
+
+            // y axis
+            var yScale = d3.scaleLinear()
+                .domain([
+                    0,
+                    Math.max(...[...data.values()].flat().map(function (d) { return d.cases; }))
+                ])
+                .range([h, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(yScale).tickFormat(function (d) { return d3.format(".2s")(d); }));
+
+            // color axis
+            var cScale = d3.scaleBand()
+                .domain([...data.keys()].toSorted())
+                .range([0, 1]);
+
+            // tool tips
+            var tooltip = d3.select("#tooltip")
+                .style("opacity", 0)
+                .style("position", "absolute");
+
+            for (let [key, value] of map) {
+                svg.append("path")
+                    .datum(value)
+                    .attr("fill", "none")
+                    .attr("stroke", function (d) { return d3.interpolateRainbow(cScale(key)); })
+                    .attr("stroke-width", 3.0)
+                    .attr("d", d3.line()
+                        .x(function (d) { return xScale(d.date); })
+                        .y(function (d) { return yScale(d.cases); })
+                    )
+                    .on('mouseover', function (event, d) {
+                        tooltip.transition()
+                            .delay(30)
+                            .duration(200)
+                            .style("opacity", 1);
+
+                        px = d3.pointer(event)[0];
+
+                        // svg.append("line")
+                        //     .attr("y1", 0)
+                        //     .attr("y2", 400)
+                        //     .attr("x1", x)
+                        //     .attr("x2", x)
+                        //     .attr("stroke", "black");
+
+                        tooltip
+                            .style("left", (event.pageX - 125) + "px")
+                            .style("top", (event.pageY) + "px")
+
+                        page1_tooltip(tooltip, d, cScale, xScale, px);
+                    })
+                    .on("mouseout", function (event, d) {
+                        tooltip.transition()
+                            .duration(100)
+                            .style("opacity", 0);
+                    });
             }
         }
 
-        function page1() {
+        function state_tooltip(tooltip, data, cScale, xScale, px) {
+            date = xScale.invert(px);
+            i = d3.scan(data, function (d) { return Math.abs(d.date - date); })
+            d = data[i];
 
+            console.log(d);
         }
 
-        ctrl_page_button()
+        async function render_page2() {
+            await reset_page();
+            page = 2;
+            document.getElementById("des_p2").hidden = false;
+            document.getElementById("sel_p2").hidden = false;
+            document.getElementById("b2").style = "background-color: #f44336;";
+        }
+
+        async function render_page3() {
+            await reset_page();
+            page = 3;
+            document.getElementById("next").disabled = true;
+            document.getElementById("des_p3").hidden = false;
+            document.getElementById("sel_p3").hidden = false;
+            document.getElementById("b3").style = "background-color: #f44336;";
+        }
+
+        // async function render_legend() {
+        //     data = await infection_data;
+
+        //     // color axis
+        //     var c = d3.scaleBand()
+        //         .domain([...data.keys()].toSorted())
+        //         .range([0, 1]);
+
+        //     d3.select("#legend")
+        //         .append("dl")
+        //         .selectAll("dt")
+        //         .data([...data.keys()])
+        //         .enter()
+        //         .append("dt")
+        //         .style("color", function (d) { return d3.interpolateRainbow(c(d)); })
+        //         .text(function (d) { return "◼ " + d; });
+        // }
+
+        async function render_page(i) {
+            if (i == 1) {
+                await render_page1();
+            } else if (i == 2) {
+                await render_page2();
+            } else if (i == 3) {
+                await render_page3();
+            } else {
+                await reset_page();
+            }
+        }
+
+        async function click_prev() {
+            render_page(page - 1);
+        }
+
+        async function click_next() {
+            render_page(page + 1);
+        }
+
+        async function reset_page() {
+            document.getElementById("des_p1").hidden = true;
+            document.getElementById("des_p2").hidden = true;
+            document.getElementById("des_p3").hidden = true;
+
+            document.getElementById("sel_p1").hidden = true;
+            document.getElementById("sel_p2").hidden = true;
+            document.getElementById("sel_p3").hidden = true;
+
+            document.getElementById("prev").disabled = false;
+            document.getElementById("next").disabled = false;
+
+            document.getElementById("b1").style = "background-color: #ffffff;";
+            document.getElementById("b2").style = "background-color: #ffffff;";
+            document.getElementById("b3").style = "background-color: #ffffff;";
+
+            document.getElementById("diagram").innerHTML = "";
+
+            // await render_legend();
+        }
+
+        async function init() {
+            await render_page(1);
+        }
     </script>
 </head>
 
-<body>
+<body onload="init()">
     <h1>COVID-19 in the United States</h1>
     <div style="text-align: center;">
-        <button id="prev">Previous</button>
-        <button>1</button>
-        <button>2</button>
-        <button>3</button>
-        <button id="next">Next</button>
+        <button id="prev" style="background-color: #ffffff;" onclick="click_prev()">Previous</button>
+        <button id="b1" style="background-color: #ffffff;" onclick="render_page(1)">1</button>
+        <button id="b2" style="background-color: #ffffff;" onclick="render_page(2)">2</button>
+        <button id="b3" style="background-color: #ffffff;" onclick="render_page(3)">3</button>
+        <button id="next" style="background-color: #ffffff;" onclick="click_next()">Next</button>
+    </div>
+    <div id="tooltip" style="width: 100px;">
+        blabla
     </div>
     <div class="main">
         <div class="left_column">
             <div id="description">
-                <p>123</p>
+                <div id="des_p1" hidden>
+                    <p>The COVID-19 pandemic, is a global pandemic of
+                        coronavirus disease 2019 (COVID-19) caused by
+                        SARS-CoV-2. On the right side we can see the
+                        infection number or death number grows from 2020 to 2023.</p>
+                </div>
+                <div id="des_p2" hidden>
+                    <p>some text 2</p>
+                </div>
+                <div id="des_p3" hidden>
+                    <p>some text 3</p>
+                </div>
             </div>
             <div id="selection">
-                <p>123</p>
+                <div id="sel_p1" hidden>
+                    <p>some text 1</p>
+                </div>
+                <div id="sel_p2" hidden>
+                    <p>some text 2</p>
+                </div>
+                <div id="sel_p3" hidden>
+                    <p>some text 3</p>
+                </div>
             </div>
         </div>
         <div class="right_column">
-            <svg id="diagram">
+            <svg id="diagram" viewbox="0 0 600 400">
             </svg>
         </div>
-
     </div>
 </body>
 

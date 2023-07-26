@@ -26,5 +26,5 @@ df = df.reset_index()
 df
 
 # %%
-df.to_csv("infection.csv")
+df.to_csv("../data/infection.csv")
 # %%
