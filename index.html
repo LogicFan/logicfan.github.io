@@ -3,11 +3,104 @@
 
 <head>
     <title>Narrative Visualization - Yongda Fan</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+        }
+
+        .main {
+            width: 100%;
+            height: calc(100% - 150px);
+            margin: 0;
+            display: flex;
+        }
+
+        .left_column {
+            flex: 20%;
+            columns: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right_column {
+            flex: 80%;
+            columns: 100%;
+            margin: 0;
+        }
+
+        #description {
+            width: 100%;
+            flex: 50%;
+        }
+
+        #selection {
+            width: 100%;
+            flex: 50%;
+        }
+
+        #diagram {
+            width: 100%;
+            height: 100%;
+        }
+
+        .debug {
+            border: 1pt;
+            border-style: solid;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script type="module">
+        var page = 1;
+
+        function ctrl_page_button() {
+            if (page == 1) {
+                document.getElementById("prev").disabled = true
+                document.getElementById("next").disabled = false
+            } else if (page == 3) {
+                document.getElementById("prev").disabled = false
+                document.getElementById("next").disabled = true
+            } else {
+                document.getElementById("prev").disabled = true
+                document.getElementById("next").disabled = true
+            }
+        }
+
+        function page1() {
+
+        }
+
+        ctrl_page_button()
+    </script>
 </head>
 
 <body>
+    <h1>COVID-19 in the United States</h1>
+    <div style="text-align: center;">
+        <button id="prev">Previous</button>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button id="next">Next</button>
+    </div>
+    <div class="main">
+        <div class="left_column">
+            <div id="description">
+                <p>123</p>
+            </div>
+            <div id="selection">
+                <p>123</p>
+            </div>
+        </div>
+        <div class="right_column">
+            <svg id="diagram">
+            </svg>
+        </div>
 
-    <h1>Title</h1>
-    <p>This is a paragraph.</p>
-
+    </div>
 </body>
+
+</html>
