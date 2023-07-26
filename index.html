@@ -93,7 +93,6 @@
             var svg = d3.select("#diagram")
                 .append("g")
                 .attr("transform", "translate(40,20)")
-                .attr("id", "ref");
 
             // x axis
             var xScale = d3.scaleTime()
@@ -176,6 +175,117 @@
             page = 2;
             document.getElementById("des_p2").hidden = false;
             document.getElementById("b2").style = "background-color: #f44336;";
+
+            data = await infection_data;
+
+            // draw chart
+            var h = 360;
+            var w = 540;
+
+            var svg = d3.select("#diagram")
+                .append("g")
+                .attr("transform", "translate(40,20)")
+
+            // x axis
+            var xScale = d3.scaleTime()
+                .domain([
+                    Math.min(...[...data.values()].flat().map(function (d) { return d.date; })),
+                    Math.max(...[...data.values()].flat().map(function (d) { return d.date; }))
+                ])
+                .range([0, w]);
+            svg.append("g")
+                .attr("transform", "translate(0," + h + ")")
+                .call(d3.axisBottom(xScale));
+
+            // y axis
+            var yScale = d3.scaleLinear()
+                .domain([
+                    0,
+                    Math.max(...[...data.values()].flat().map(function (d) { return d.cases; }))
+                ])
+                .range([h, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(yScale).tickFormat(function (d) { return d3.format(".2s")(d); }));
+
+            // color axis
+            var cScale = d3.scaleBand()
+                .domain([...data.keys()].toSorted())
+                .range([0, 1]);
+
+            // background
+            for (let [key, value] of map) {
+                // svg.append("path")
+                //     .datum(value)
+                //     .attr("fill", "none")
+                //     .attr("stroke", function (d) { return d3.interpolateRainbow(cScale(key)); })
+                //     .attr("stroke-width", 3.0)
+                //     .attr("stroke-opacity", 0.5)
+                //     .attr("d", d3.line()
+                //         .x(function (d) { return xScale(d.date); })
+                //         .y(function (d) { return yScale(d.cases); })
+                //     )
+            }
+
+            // tool tips
+            var tooltip = d3.select("#tooltip")
+                .style("opacity", 0)
+                .style("position", "absolute");
+
+            // event 
+            var events = [
+                {
+                    date: d3.timeParse("%Y-%m-%d")("2020-12-14"),
+                    title: "first vaccine was administered",
+                    text: "blabla",
+                    link: "https://abcnews.go.com/US/us-administer-1st-doses-pfizer-coronavirus-vaccine/story?id=74703018"
+                }
+            ]
+
+            var annotation = svg.selectAll('.empty')
+                .data(events)
+                .enter()
+                .append('g')
+                .attr("transform", function (d) { return "translate(" + (40 + xScale(d.date)) + ",0)"; });
+
+            annotation.append('line')
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", 0)
+                .attr("y2", 360)
+                .attr("stroke", "red")
+                .attr("stroke-width", 1.0);
+
+            annotation.append('circle')
+                .attr("cx", 0)
+                .attr("cy", 5)
+                .attr("r", 5)
+                .attr("fill", "red")
+                .on('mouseover', async function (event, d) {
+                    tooltip.transition()
+                        .delay(30)
+                        .duration(200)
+                        .style("opacity", 1);
+                    tooltip
+                        .style("left", (event.pageX - 125) + "px")
+                        .style("top", (event.pageY) + "px")
+
+                    await page2_tooltip(tooltip, d);
+                })
+                .on("mouseout", async function (event, d) {
+                    tooltip.transition()
+                        .duration(100)
+                        .style("opacity", 0);
+                });
+        }
+
+        async function page2_tooltip(tooltip, d) {
+            tooltip
+                .select("#title")
+                .text(d3.timeFormat("%B %d, %Y")(d.date));
+
+            tooltip
+                .select("#text")
+                .text("as of " + d3.timeFormat("%B %d, %Y")(d.date) + ", there are " + d.cases + " people infected.");
         }
 
         async function render_page3() {
@@ -224,7 +334,7 @@
         }
 
         async function init() {
-            await render_page(1);
+            await render_page(2);
         }
     </script>
 </head>
@@ -250,6 +360,8 @@
                         coronavirus disease 2019 (COVID-19) caused by
                         SARS-CoV-2. On the right side we can see the
                         infection number or death number grows from 2020 to 2023.</p>
+                    <p>You can hover your mouse on the line to see the name of the
+                        State and number of cases at specific date. </p>
                 </div>
                 <div id="des_p2" hidden>
                     <p>some text 2</p>
