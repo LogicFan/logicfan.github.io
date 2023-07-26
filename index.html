@@ -51,6 +51,8 @@
 
         #tooltip {
             background-color: white;
+            border: 1pt;
+            border-style: solid;
         }
 
         .debug {
@@ -81,13 +83,13 @@
                 }
                 return map;
             });
+        var mask_data = d3.csv('./data/mask.csv');
 
         async function render_page1() {
             await reset_page();
             page = 1;
             document.getElementById("prev").disabled = true;
             document.getElementById("des_p1").hidden = false;
-            document.getElementById("sel_p1").hidden = false;
             document.getElementById("b1").style = "background-color: #f44336;";
 
             data = await infection_data;
@@ -143,28 +145,19 @@
                         .x(function (d) { return xScale(d.date); })
                         .y(function (d) { return yScale(d.cases); })
                     )
-                    .on('mouseover', function (event, d) {
+                    .on('mouseover', async function (event, d) {
                         tooltip.transition()
                             .delay(30)
                             .duration(200)
                             .style("opacity", 1);
-
-                        px = d3.pointer(event)[0];
-
-                        // svg.append("line")
-                        //     .attr("y1", 0)
-                        //     .attr("y2", 400)
-                        //     .attr("x1", x)
-                        //     .attr("x2", x)
-                        //     .attr("stroke", "black");
-
                         tooltip
                             .style("left", (event.pageX - 125) + "px")
                             .style("top", (event.pageY) + "px")
 
-                        page1_tooltip(tooltip, d, cScale, xScale, px);
+                        var px = d3.pointer(event)[0];
+                        await state_tooltip(tooltip, d, cScale, xScale, px);
                     })
-                    .on("mouseout", function (event, d) {
+                    .on("mouseout", async function (event, d) {
                         tooltip.transition()
                             .duration(100)
                             .style("opacity", 0);
@@ -172,10 +165,19 @@
             }
         }
 
-        function state_tooltip(tooltip, data, cScale, xScale, px) {
-            date = xScale.invert(px);
-            i = d3.scan(data, function (d) { return Math.abs(d.date - date); })
-            d = data[i];
+        async function state_tooltip(tooltip, data, cScale, xScale, px) {
+            var date = xScale.invert(px);
+            var i = d3.scan(data, function (d) { return Math.abs(d.date - date); })
+            var d = data[i];
+
+            tooltip
+                .select("#title")
+                .style("color", d3.interpolateRainbow(cScale(d.state)))
+                .text("◼ " + d.state);
+
+            tooltip
+                .select("#text")
+                .text("as of " + d3.timeFormat("%B %d, %Y")(d.date) + ", there are " + d.cases + " people infected.");
 
             console.log(d);
         }
@@ -240,7 +242,6 @@
             document.getElementById("des_p2").hidden = true;
             document.getElementById("des_p3").hidden = true;
 
-            document.getElementById("sel_p1").hidden = true;
             document.getElementById("sel_p2").hidden = true;
             document.getElementById("sel_p3").hidden = true;
 
@@ -272,7 +273,8 @@
         <button id="next" style="background-color: #ffffff;" onclick="click_next()">Next</button>
     </div>
     <div id="tooltip" style="width: 100px;">
-        blabla
+        <p id="title"></p>
+        <p id="text" style="font-size: x-small;"></p>
     </div>
     <div class="main">
         <div class="left_column">
@@ -291,9 +293,6 @@
                 </div>
             </div>
             <div id="selection">
-                <div id="sel_p1" hidden>
-                    <p>some text 1</p>
-                </div>
                 <div id="sel_p2" hidden>
                     <p>some text 2</p>
                 </div>
