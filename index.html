@@ -223,16 +223,16 @@
 
             // background
             for (let [key, value] of map) {
-                // svg.append("path")
-                //     .datum(value)
-                //     .attr("fill", "none")
-                //     .attr("stroke", function (d) { return d3.interpolateRainbow(cScale(key)); })
-                //     .attr("stroke-width", 3.0)
-                //     .attr("stroke-opacity", 0.5)
-                //     .attr("d", d3.line()
-                //         .x(function (d) { return xScale(d.date); })
-                //         .y(function (d) { return yScale(d.cases); })
-                //     )
+                svg.append("path")
+                    .datum(value)
+                    .attr("fill", "none")
+                    .attr("stroke", function (d) { return d3.interpolateRainbow(cScale(key)); })
+                    .attr("stroke-width", 3.0)
+                    .attr("stroke-opacity", 0.5)
+                    .attr("d", d3.line()
+                        .x(function (d) { return xScale(d.date); })
+                        .y(function (d) { return yScale(d.cases); })
+                    )
             }
 
             // tool tips
@@ -244,9 +244,19 @@
             var events = [
                 {
                     date: d3.timeParse("%Y-%m-%d")("2020-12-14"),
-                    title: "first vaccine was administered",
-                    text: "blabla",
-                    link: "https://abcnews.go.com/US/us-administer-1st-doses-pfizer-coronavirus-vaccine/story?id=74703018"
+                    text: "first vaccine was administered in the United States.",
+                },
+                {
+                    date: d3.timeParse("%Y-%m-%d")("2020-04-03"),
+                    text: "CDC issued guidance of mask use for the general public.",
+                },
+                {
+                    date: d3.timeParse("%Y-%m-%d")("2020-10-05"),
+                    text: "Delta (B.1.617.2) variant was first discoverd.",
+                },
+                {
+                    date: d3.timeParse("%Y-%m-%d")("2021-11-24"),
+                    text: "Omicron (B.1.1.529) variant was first discoverd.",
                 }
             ]
 
@@ -254,7 +264,7 @@
                 .data(events)
                 .enter()
                 .append('g')
-                .attr("transform", function (d) { return "translate(" + (40 + xScale(d.date)) + ",0)"; });
+                .attr("transform", function (d) { return "translate(" + xScale(d.date) + ",0)"; });
 
             annotation.append('line')
                 .attr("x1", 0)
@@ -276,8 +286,8 @@
                         .style("opacity", 1);
 
                     tooltip
-                        .style("left", (event.pageX - 225) + "px")
-                        .style("top", (event.pageY) + "px")
+                        .style("left", (event.pageX - 100) + "px")
+                        .style("top", (event.pageY + 10) + "px")
 
                     await page2_tooltip(tooltip, d);
                 })
@@ -295,7 +305,7 @@
 
             tooltip
                 .select("#text")
-                .text("as of " + d3.timeFormat("%B %d, %Y")(d.date) + ", there are " + d.cases + " people infected.");
+                .text(d.text);
         }
 
         async function render_page3() {
@@ -339,12 +349,10 @@
             document.getElementById("b3").style = "background-color: #ffffff;";
 
             document.getElementById("diagram").innerHTML = "";
-
-            // await render_legend();
         }
 
         async function init() {
-            await render_page(1);
+            await render_page(2);
         }
     </script>
 </head>
@@ -360,7 +368,7 @@
     </div>
     <div id="tooltip" style="width: 200px;">
         <p id="title"></p>
-        <p id="text" style="font-size: x-small;"></p>
+        <p id="text" style="font-size: smaller;"></p>
     </div>
     <div class="main">
         <div class="left_column">
@@ -374,7 +382,12 @@
                         State and number of cases at specific date. </p>
                 </div>
                 <div id="des_p2" hidden>
-                    <p>some text 2</p>
+                    <p>On the right side, you may see a few important things
+                        happened in the pandemic on top of the COVID-19 cases
+                        trend. </p>
+                    <p>You can hover your mouse on the red circle at top to
+                        see what happened at each stage of pandemic.
+                    </p>
                 </div>
                 <div id="des_p3" hidden>
                     <p>some text 3</p>
