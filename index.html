@@ -75,7 +75,7 @@
                 }
                 return map;
             });
-        var mask_data = d3.csv('./data/mask.csv');
+        var scatter_data = d3.csv('./data/scatter.csv');
 
         async function render_page1() {
             await reset_page();
@@ -121,9 +121,7 @@
                 .range([0, 1]);
 
             // tool tips
-            var tooltip = d3.select("#tooltip")
-                .style("opacity", 0)
-                .style("position", "absolute");
+            var tooltip = d3.select("#tooltip");
 
             for (let [key, value] of map) {
                 svg.append("path")
@@ -236,9 +234,7 @@
             }
 
             // tool tips
-            var tooltip = d3.select("#tooltip")
-                .style("opacity", 0)
-                .style("position", "absolute");
+            var tooltip = d3.select("#tooltip");
 
             // event 
             var events = [
@@ -349,6 +345,10 @@
             document.getElementById("b3").style = "background-color: #ffffff;";
 
             document.getElementById("diagram").innerHTML = "";
+
+            d3.select("#tooltip")
+                .style("opacity", 0)
+                .style("position", "absolute");
         }
 
         async function init() {
