@@ -395,7 +395,7 @@
                 .attr("r", "3pt")
                 .attr("fill", function (d) { return d3.interpolateRainbow(cScale(d.state)); })
                 .attr("visibility", function (d) {
-                    if (xScale(d) == NaN || yScale(d) == NaN) { return "hidden"; } else { return "visible"; }
+                    if (xValue(d) == 0 || yValue(d) == 0) { return "hidden"; } else { return "visible"; }
                 })
                 .on('mouseover', async function (event, d) {
                     tooltip.transition()
@@ -437,8 +437,11 @@
             tooltip
                 .select("#text")
                 .text(
-                    "total covid-19 cases: " + d.cases + "\n" +
-                    "covid-19 cases %: " + (d.cases / d.pop) + "\n"
+                    "covid-19 cases: " + d.cases + " (" + (d.cases / d.pop * 100).toFixed(2) + "%) \n" +
+                    "population: " + d.pop + "\n" +
+                    "mask usage: " + (d.mask * 100).toFixed(2) + "% \n" +
+                    "health cost (total): $" + d.cost + " millions" + "\n" +
+                    "health cost (per capita): $" + (d.cost / d.pop * 1000000).toFixed(2)
                 );
         }
 
