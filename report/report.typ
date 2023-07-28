@@ -65,7 +65,7 @@ Secondly, the scenes are ordered in terms on information complexity, which help 
 #figure(
   image("annotation.jpg", width: 30%),
   caption: [
-    lines of covid cases are faded away to help focus on event annotation
+    tooltip of event
   ],
 )
 
@@ -73,5 +73,23 @@ On page 2, there are event annotations. They follow the same structure (i.e. red
 
 = Parameters
 // What are the parameters of the narrative visualization? What are the states of the narrative visualization? How are the parameters used to define the state and each scene?
-- page number: 
+- page number: The current page number is shown in the page menu with red color. It defines which scene the reader is looking at. The possible states for this parameter are `[1, 2, 3]`.
+- tooltip: It includes if a tooltip will be shown and corresponding data. The state can be either `shown` or `hidden`, if it is `shown`, then the state will also includes the tooltip position and display information. 
+#figure(
+  image("tooltip.jpg", width: 80%),
+  caption: [
+    tooltips of all pages
+  ],
+)
+- variable for x-axis and y-axis (page 3 only): They control the x-axis and y-axis in the scatter plot of page 3. For x-axis, the possible states are `[population, mask_usage, health_cost_total, health_cost_per_capita]`; for y-axis, the possible states are `total_infection_cases, infection_percentage]`.
+#figure(
+  image("scatter_plot.jpg", width: 30%),
+  caption: [
+    variable selection for x-axis and y-axis
+  ],
+)
+
+= Triggers
+// What are the triggers that connect user actions to changes of state in the narrative visualization? What affordances are provided to the user to communicate to them what options are available to them in the narrative visualization?
+
 
