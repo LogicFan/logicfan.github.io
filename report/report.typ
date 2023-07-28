@@ -49,7 +49,7 @@ Reader will first focus on the chart because it's biggest and with color, so it 
   ],
 )
 
-Reader may navigate between scenes easily using the page number menu, the overall visual structure is consistent (as mention above) across the scenes, to prevent reader from disorentation. Specifically, because the first two scenes are connected in terms of story telling, the chart in second scenes keeps the data from the chart in first scene but faded, to give a smoother transition to the reader. Additionally, in all three scenes, the color representation for a particular state remain the same, which gives the color consistency. 
+Reader may navigate between scenes easily using the page number menu, the overall visual structure is consistent (as mention above) across the scenes, to keep reader orentation from the tansition. Specifically, because the first two scenes are connected in terms of story telling, the chart in second scenes keeps the data from the chart in first scene but faded, to give a smoother transition to the reader. Additionally, in all three scenes, the color representation for a particular state remain the same, which gives the color consistency. 
 
 = Scenes
 // What are the scenes of your narrative visualization? How are the scenes ordered, and why?
@@ -61,4 +61,17 @@ Secondly, the scenes are ordered in terms on information complexity, which help 
 
 = Annotations
 // What template was followed for the annotations, and why that template? How are the annotations used to support the messaging? Do the annotations change within a single scene, and if so, how and why
+
+#figure(
+  image("annotation.jpg", width: 30%),
+  caption: [
+    lines of covid cases are faded away to help focus on event annotation
+  ],
+)
+
+On page 2, there are event annotations. They follow the same structure (i.e. red circle at top with a red line). This template highligh the time a event happened; the red circle allow reader to hover the mouse on it and see the detail using tooltip. This annotation is critial, because it gives the reader a visual cue about when a event happened and how covid cases arise around the same time. These annotationa does not change within a sginle scene. 
+
+= Parameters
+// What are the parameters of the narrative visualization? What are the states of the narrative visualization? How are the parameters used to define the state and each scene?
+- page number: 
 
