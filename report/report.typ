@@ -91,5 +91,8 @@ On page 2, there are event annotations. They follow the same structure (i.e. red
 
 = Triggers
 // What are the triggers that connect user actions to changes of state in the narrative visualization? What affordances are provided to the user to communicate to them what options are available to them in the narrative visualization?
+- page number: user may click the page number button or `previous` or `next` button at upper center position. User should be able to notice it because its position is easy to see.
+- tooltip: user may hover on the data point in the chart to enable to tooltip. There are instructions in the text block telling user how to enable to tooltip.
+- variable for x-axis and y-axis (page 3 only): user may change the variable for x-axis or y-axis using the selection menu on the left. The selection menu itself is clear and there are instructions in the text block. 
 
 
